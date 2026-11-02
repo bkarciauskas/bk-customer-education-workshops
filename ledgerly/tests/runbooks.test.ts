@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   RUNBOOK_SECTIONS_101,
+  RUNBOOK_SECTIONS_102,
   RUNBOOK_SECTIONS_201,
   RUNBOOK_SECTIONS_301,
   RUNBOOK_TRACKS,
@@ -20,17 +21,22 @@ import {
 
 const root = process.cwd();
 const beats101 = runbookBeats("101");
+const beats102 = runbookBeats("102");
 const beats201 = runbookBeats("201");
 const beats301 = runbookBeats("301");
 
 describe("runbook catalog", () => {
-  it("ships the 101, 201, and 301 tracks", () => {
-    expect(RUNBOOK_TRACKS.map((track) => track.id)).toEqual(["101", "201", "301"]);
+  it("ships the 101, 102, 201, and 301 tracks", () => {
+    expect(RUNBOOK_TRACKS.map((track) => track.id)).toEqual(["101", "102", "201", "301"]);
 
     const track101 = RUNBOOK_TRACKS.find((track) => track.id === "101");
+    const track102 = RUNBOOK_TRACKS.find((track) => track.id === "102");
     const track201 = RUNBOOK_TRACKS.find((track) => track.id === "201");
     const track301 = RUNBOOK_TRACKS.find((track) => track.id === "301");
 
+    expect(track102?.description).toBe(
+      "You will take a local change through shipping: raise a PR from Grok Build, resolve review comments with the agent and Bugbot, split a big change into smaller PRs and merge them in order, then validate after merge.",
+    );
     expect(track101?.description).toBe(
       "You will explore different ways to work in Grok Build, use modes and models for the right tasks, apply rules and skills to ensure consistent quality, and complete at least one task with an agent.",
     );
@@ -190,6 +196,79 @@ describe("runbook catalog", () => {
     expect(RUNBOOK_SECTIONS_101.flatMap((section) => section.beats.map((entry) => entry.id))).toEqual(
       beats101.map((entry) => entry.id),
     );
+  });
+
+  it("keeps the 102 beats intact", () => {
+    const skill = readFileSync(join(root, ".cursor/skills/choose-cursor-workflow/SKILL.md"), "utf8");
+    const track102 = RUNBOOK_TRACKS.find((track) => track.id === "102");
+    expect(skill).toContain(track102?.description ?? "");
+    expect(skill).toContain("runbooks.html?track=102");
+
+    expect(RUNBOOK_SECTIONS_102.map((section) => section.title)).toEqual([
+      "How do you raise a PR?",
+      "How do you resolve review comments?",
+      "How do you split a big change?",
+      "How do you merge and validate?",
+    ]);
+    expect(RUNBOOK_SECTIONS_102.map((section) => section.id)).toEqual([
+      "raise-pr",
+      "resolve-review",
+      "split-change",
+      "merge-validate",
+    ]);
+    expect(RUNBOOK_SECTIONS_102.map((section) => section.beats.length)).toEqual([5, 6, 4, 7]);
+    expect(beats102.map((beat) => beat.id)).toEqual([
+      "start-from-101",
+      "create-base-branch",
+      "local-done-check",
+      "open-pr",
+      "read-pr",
+      "seed-review-comments",
+      "optional-bugbot",
+      "bugbot-fallback",
+      "triage-comments",
+      "fix-comments",
+      "re-request-review",
+      "propose-split",
+      "review-split-plan",
+      "build-split",
+      "close-original",
+      "check-merge-order",
+      "merge-first-slice",
+      "retarget-stack",
+      "merge-remaining",
+      "validate-after-merge",
+      "debug-after-merge",
+      "cleanup",
+    ]);
+
+    expect(beats102.every((entry) => entry.promptType !== undefined)).toBe(true);
+    expect(
+      beats102.filter((entry) => entry.promptType === "none").every((entry) => entry.example === undefined),
+    ).toBe(true);
+    expect(beats102.filter((entry) => entry.optional).map((entry) => entry.id)).toEqual(["optional-bugbot"]);
+
+    // Presenting PRs and branches must follow .cursor/rules/disposable-demo-prs.mdc so reset can find them.
+    const text = beats102
+      .flatMap((entry) => [
+        entry.detail,
+        entry.example ?? "",
+        ...(entry.after ?? []).map((follow) => follow.text),
+      ])
+      .join("\n");
+    for (const branch of text.match(/demo\/\S+/g) ?? []) {
+      expect(branch).toMatch(/^demo\/delete-me-102-/);
+    }
+    for (const title of text.match(/Title it .+?\./g) ?? []) {
+      expect(title).toContain("[demo-delete-me]");
+    }
+    const recorded = text.match(/record branch (\S+) --remote/g) ?? [];
+    expect(recorded).toEqual([
+      "record branch demo/delete-me-102-base --remote",
+      "record branch demo/delete-me-102-email --remote",
+      "record branch demo/delete-me-102-<slice> --remote",
+    ]);
+    expect(text).not.toMatch(/PR into main|merge into main/i);
   });
 
   it("keeps the 201 beats intact", () => {
@@ -758,13 +837,15 @@ describe("runbook catalog", () => {
       Object.keys(optionalFeatures),
     );
     expect(beats101.some((entry) => entry.optional)).toBe(false);
+    expect(beats102.filter((entry) => entry.optional).map((entry) => entry.optional?.feature)).toEqual(["Bugbot"]);
     expect(beats201.some((entry) => entry.optional)).toBe(false);
     for (const [id, feature] of Object.entries(optionalFeatures)) {
       expect(beats301.find((entry) => entry.id === id)?.optional).toEqual({ feature });
     }
     expect(trackOptionalFeatures(RUNBOOK_TRACKS[0])).toEqual([]);
-    expect(trackOptionalFeatures(RUNBOOK_TRACKS[1])).toEqual([]);
-    expect(trackOptionalFeatures(RUNBOOK_TRACKS[2])).toEqual([
+    expect(trackOptionalFeatures(RUNBOOK_TRACKS[1])).toEqual(["Bugbot"]);
+    expect(trackOptionalFeatures(RUNBOOK_TRACKS[2])).toEqual([]);
+    expect(trackOptionalFeatures(RUNBOOK_TRACKS[3])).toEqual([
       "Cloud Agents",
       "Projects",
       "Bugbot",
@@ -805,7 +886,10 @@ describe("runbook catalog", () => {
       );
       expect(html).toContain(`data-feature="${feature}" checked`);
     }
-    expect(html.match(/class="feature-toggle"/g)).toHaveLength(4);
+    expect(html).toContain(
+      '.track[data-track="102"]:has(.feature-toggle[data-feature="Bugbot"]:not(:checked)) .beat[data-feature="Bugbot"] { display: none; }',
+    );
+    expect(html.match(/class="feature-toggle"/g)).toHaveLength(5);
 
     const trackMarkup = (id: string, nextId?: string) => {
       const marker = `<div class="track" data-track="${id}"`;
@@ -815,12 +899,16 @@ describe("runbook catalog", () => {
         : html.length;
       return html.slice(start, end);
     };
-    const track101 = trackMarkup("101", "201");
+    const track101 = trackMarkup("101", "102");
+    const track102 = trackMarkup("102", "201");
     const track201 = trackMarkup("201", "301");
     const track301 = trackMarkup("301");
     expect(track101).toContain('data-beat="ask"');
     expect(track201).toContain('data-beat="rename-agent-1-all"');
     expect(track301).toContain('data-beat="plan-command-center"');
+    expect(track102).toContain('data-beat="open-pr"');
+    expect(track102).toContain('<article class="beat" data-beat="optional-bugbot" data-feature="Bugbot">');
+    expect(track102).toContain('<article class="beat" data-beat="bugbot-fallback">');
     expect(track101).not.toContain("feature-toggle");
     expect(track201).not.toContain("feature-toggle");
     expect(track301).toContain('class="feature-checklist"');
@@ -940,7 +1028,7 @@ describe("runbook catalog", () => {
   });
 
   it("does not resolve the retired advanced track", () => {
-    expect(RUNBOOK_TRACKS).toHaveLength(3);
+    expect(RUNBOOK_TRACKS).toHaveLength(4);
     for (const retired of ["advanced", "Advanced"]) {
       expect(RUNBOOK_TRACKS.find((track) => track.id === retired)).toBeUndefined();
     }
@@ -956,7 +1044,7 @@ describe("runbook catalog", () => {
     }
   });
 
-  it("points docs, skills, and rules at runbooks.html and documents the 101, 201, and 301 tracks", () => {
+  it("points docs, skills, and rules at runbooks.html and documents the 101, 102, 201, and 301 tracks", () => {
     const files = {
       readme: readFileSync(join(root, "README.md"), "utf8"),
       howto: readFileSync(join(root, "demo-howto.md"), "utf8"),
@@ -976,6 +1064,10 @@ describe("runbook catalog", () => {
       );
     }
 
+    expect(files.readme).toContain("runbooks.html?track=102");
+    expect(files.howto).toContain("runbooks.html?track=102");
+    expect(files.readme).toContain("outlines/grok-build-102.md");
+    expect(files.howto).toContain("outlines/grok-build-102.md");
     expect(files.readme).toContain("runbooks.html?track=201");
     expect(files.howto).toContain("runbooks.html?track=201");
     expect(files.readme).toContain("runbooks.html?track=301");

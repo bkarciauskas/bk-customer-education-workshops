@@ -1,6 +1,6 @@
 ---
 name: preflight-checker
-description: Preflight checker for Ledgerly demo tracks. Use before a 101, 201, or 301 session (or before a section that needs MCP). Reports pass / fail / blocked per dependency. Does not install, seed, start the server, stage Linear, authenticate MCP, or edit product code unless the operator asks to remediate after the report.
+description: Preflight checker for Ledgerly demo tracks. Use before a 101, 102, 201, or 301 session (or before a section that needs MCP). Reports pass / fail / blocked per dependency. Does not install, seed, start the server, stage Linear, authenticate MCP, or edit product code unless the operator asks to remediate after the report.
 readonly: false
 ---
 
@@ -12,16 +12,16 @@ Catalog prices stay Starter $49 / Growth $99 / Scale $249. Operator is Avery Qui
 
 Before any check:
 
-1. If the invocation includes exactly one of `101`, `201`, `301` (as `track 201`, `track=301`, or a lone track id), pin that track.
-2. Otherwise **stop and ask**: `Which track should I preflight: 101, 201, or 301?` Run zero checks until they answer.
+1. If the invocation includes exactly one of `101`, `102`, `201`, `301` (as `track 201`, `track=301`, or a lone track id), pin that track.
+2. Otherwise **stop and ask**: `Which track should I preflight: 101, 102, 201, or 301?` Run zero checks until they answer.
 3. Do not infer the track from the Canvas sidecar, open browser tab, last chat, or `runbooks.html` query string.
-4. Reject any other id. Do not invent a fourth track.
+4. Reject any other id. Do not invent a fifth track.
 
-Optional features on 301 (Cloud Agents, Projects, Bugbot, Reviewer automation, etc.) are **not** a second identifier. After the track is pinned, list optional-feature deps separately as `optional` — never block the whole track on an unchecked optional feature unless the operator named that feature in the request.
+Optional features on 102 (Bugbot) and 301 (Cloud Agents, Projects, Bugbot, Reviewer automation, etc.) are **not** a second identifier. After the track is pinned, list optional-feature deps separately as `optional` — never block the whole track on an unchecked optional feature unless the operator named that feature in the request.
 
 ## 2. Shared baseline (every track)
 
-Run these for `101`, `201`, and `301`. Baseline failures are `blocked` for every track. Name the remediation skill or command without running it (`npm i`, `npx prisma generate`, `npx prisma db seed`, `start-ledgerly`, `npm run demo:reset`).
+Run these for `101`, `102`, `201`, and `301`. Baseline failures are `blocked` for every track. Name the remediation skill or command without running it (`npm i`, `npx prisma generate`, `npx prisma db seed`, `start-ledgerly`, `npm run demo:reset`).
 
 | Check | How | Pass when |
 | --- | --- | --- |
@@ -29,7 +29,7 @@ Run these for `101`, `201`, and `301`. Baseline failures are `blocked` for every
 | Prisma client | Probe only — e.g. `node -e "require.resolve('@prisma/client')"` or an import check. Do **not** run `npx prisma generate`. | `@prisma/client` resolves; remediation may name `npx prisma generate` without running it |
 | SQLite seed | same probe as `start-ledgerly` (`customer.count()` via `tsx`) | prints `seeded` (count > 0) |
 | Dev server | `curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:43173` | 2xx/3xx |
-| Shipped suite shape | `npm test` (or vitest summary) | **1 failed / 32 passed**; sole red file `tests/suggested-credit-api.test.ts` |
+| Shipped suite shape | `npm test` (or vitest summary) | **1 failed / 33 passed**; sole red file `tests/suggested-credit-api.test.ts` |
 | Planted demo error | When the server is up: GET `/api/v1/disputes/dsp_1043/suggested-credit` (or the dispute page) | Suggested credit still shows the v1 **$400** claim (40000 cents). Do not "fix" it. If the server is down, mark this check blocked with the server failure — do not start the server. |
 | Empty project MCP map | read `.cursor/mcp.json`; confirm no `mcp/` directory | empty `mcpServers` (e.g. `{}` or `{"mcpServers":{}}`) / no `ledgerly-db`; no `mcp/` directory |
 | Project agents present | `test -d .cursor/agents` | directory exists; track matrices below name which agent files are required |
@@ -64,6 +64,19 @@ try {
 | `start-ledgerly` skill | required | `.cursor/skills/start-ledgerly/SKILL.md` exists |
 
 Do not require Linear, `stage-linear`, or `plugins/standard-bug-fix` on 101. List those under **Skipped**.
+
+### 102 — PR, review, split, merge, validate
+
+| Dependency | Kind | Pass when |
+| --- | --- | --- |
+| Shared baseline | required | all green |
+| `origin` remote | required | `git remote get-url origin` succeeds and `git ls-remote --exit-code --heads origin main` returns |
+| Push access | required | `gh api repos/<owner>/<repo> --jq .permissions.push` prints `true`. If `gh` is missing or unauthenticated, report `unknown` with the remediation "use a fork you can push to" — do not push to probe |
+| No leftover 102 branches | required | `git branch --list 'demo/delete-me-102-*'` and `git ls-remote --heads origin 'refs/heads/demo/delete-me-102-*'` are both empty. If not, `fail` and name `npm run demo:reset` (recorded remotes) or deleting the listed branches by hand |
+| `change-reviewer` agent | required | `.cursor/agents/change-reviewer.md` exists (Bugbot fallback) |
+| Disposable PR rule | required | `.cursor/rules/disposable-demo-prs.mdc` exists |
+| Bugbot | optional feature | report as `optional` (or required when the operator named Bugbot); report `unknown` if you cannot probe it |
+| Linear MCP / Figma MCP | not required | list under **Skipped** |
 
 ### 201 — context, skills, Linear MCP, parallel agents
 

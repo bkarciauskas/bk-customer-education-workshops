@@ -11,6 +11,8 @@ describe("runbooks catalog hrefs", () => {
     expect(runbookSectionHref("101", "first-prompt")).toBe(
       "runbooks.html?track=101#101-first-prompt",
     );
+    expect(runbookTrackHref("102")).toBe("runbooks.html?track=102");
+    expect(runbookSectionHref("102", "raise-pr")).toBe("runbooks.html?track=102#102-raise-pr");
     expect(runbookTrackHref("201")).toBe("runbooks.html?track=201");
     expect(runbookSectionHref("201", "target-context")).toBe(
       "runbooks.html?track=201#201-target-context",

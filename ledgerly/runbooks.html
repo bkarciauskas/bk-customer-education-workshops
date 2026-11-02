@@ -90,6 +90,7 @@
       font-size: 0.8125rem; font-weight: 400; text-decoration: none; cursor: pointer;
     }
     .feature-option input { width: 1rem; height: 1rem; margin: 0; accent-color: var(--indigo); }
+    .track[data-track="102"]:has(.feature-toggle[data-feature="Bugbot"]:not(:checked)) .beat[data-feature="Bugbot"] { display: none; }
     .track[data-track="301"]:has(.feature-toggle[data-feature="Cloud Agents"]:not(:checked)) .beat[data-feature="Cloud Agents"] { display: none; }
     .track[data-track="301"]:has(.feature-toggle[data-feature="Projects"]:not(:checked)) .beat[data-feature="Projects"] { display: none; }
     .track[data-track="301"]:has(.feature-toggle[data-feature="Bugbot"]:not(:checked)) .beat[data-feature="Bugbot"] { display: none; }
@@ -100,10 +101,11 @@
   <main>
     <p class="eyebrow">Demo catalog</p>
     <h1>Runbooks</h1>
-    <p class="lede">Choose a track, jump to a section, and copy the next beat into Grok Build. Link a track directly with <code>?track=201</code> or <code>?track=301</code>.</p>
+    <p class="lede">Choose a track, jump to a section, and copy the next beat into Grok Build. Link a track directly with <code>?track=102</code>, <code>?track=201</code>, or <code>?track=301</code>.</p>
     <label for="track">Catalog</label>
     <select id="track">
           <option value="101">101</option>
+          <option value="102">102</option>
           <option value="201">201</option>
           <option value="301">301</option>
     </select>
@@ -326,6 +328,279 @@
               <button type="button" class="copy">Copy</button>
             </div>
             <pre>Create three slides in Figma Slides outlining how I used Grok Build to develop a new feature. I want to use this as part of my demo showcase.</pre>
+          </div>
+        </article>
+        </div>
+      </section>
+    </div>
+
+    <div class="track" data-track="102">
+      <h2>102</h2>
+      <p class="lede">You will take a local change through shipping: raise a PR from Grok Build, resolve review comments with the agent and Bugbot, split a big change into smaller PRs and merge them in order, then validate after merge.</p>
+      <fieldset class="feature-checklist">
+        <legend>Optional features</legend>
+        <label class="feature-option" for="feature-102-bugbot">
+          <input id="feature-102-bugbot" class="feature-toggle" type="checkbox" data-track="102" data-feature="Bugbot" checked>
+          Bugbot
+        </label>
+      </fieldset>
+      <nav class="tabs" aria-label="102 sections">
+        <a href="#102-raise-pr">How do you raise a PR?</a>
+        <a href="#102-resolve-review">How do you resolve review comments?</a>
+        <a href="#102-split-change">How do you split a big change?</a>
+        <a href="#102-merge-validate">How do you merge and validate?</a>
+      </nav>
+      <section id="102-raise-pr">
+        <h3>How do you raise a PR?</h3>
+        <div class="beats">
+        <article class="beat" data-beat="start-from-101">
+          <h4>Start from the 101 change</h4>
+          <p class="say">102 picks up where 101 ended: a working change on my laptop that nobody else has seen.</p>
+          <div class="do-box">
+            <ul><li>Open a new local agent on main. If you kept the 101 changes, skip the prompt. Otherwise rebuild them.</li></ul>
+          </div>
+          <div class="paste">
+            <div class="paste-head">
+              <span>Paste in Grok Build</span>
+              <button type="button" class="copy">Copy</button>
+            </div>
+            <pre>Add an edit email control to the invoice detail customer card. Redact the email and show it in plaintext when I click the box to edit it. Fix the failing test.</pre>
+          </div>
+        </article>
+        <article class="beat" data-beat="create-base-branch">
+          <h4>Create a practice base branch</h4>
+          <p class="say">In your own repository the base is main. In the workshop repository we merge into a throwaway base so the demo reset can remove it.</p>
+          <div class="do-box">
+            <ol><li>git switch -c demo/delete-me-102-base main</li><li>git push -u origin demo/delete-me-102-base</li><li>npm run demo:session -- record branch demo/delete-me-102-base --remote</li></ol>
+          </div>
+        </article>
+        <article class="beat" data-beat="local-done-check">
+          <h4>Check what is in the change</h4>
+          <p class="say">Local done is not merged. Before I open a PR, I want to know what is in the diff and whether it belongs together.</p>
+          <div class="paste">
+            <div class="paste-head">
+              <span>Paste in Grok Build</span>
+              <button type="button" class="copy">Copy</button>
+            </div>
+            <pre>/ask Summarize the uncommitted changes by file and concern. Flag anything that should not ship in the same PR.</pre>
+          </div>
+        </article>
+        <article class="beat" data-beat="open-pr">
+          <h4>Open a PR from Grok Build</h4>
+          <p class="say">The agent writes the branch, commit, and PR body. GitHub owns review, checks, and merge.</p>
+          <div class="paste">
+            <div class="paste-head">
+              <span>Paste in Grok Build</span>
+              <button type="button" class="copy">Copy</button>
+            </div>
+            <pre>Create branch demo/delete-me-102-email from demo/delete-me-102-base, commit these changes with a clear message, push it, and open a PR into demo/delete-me-102-base. Title it [demo-delete-me] Edit and redact the customer email. In the body, list what changed, how to test it, and what a reviewer should check.</pre>
+          </div>
+          <div class="do-box">
+            <ul><li>npm run demo:session -- record branch demo/delete-me-102-email --remote</li></ul>
+          </div>
+        </article>
+        <article class="beat" data-beat="read-pr">
+          <h4>Read the PR as a reviewer</h4>
+          <p class="say">The PR body is the first thing a coworker reads. If it does not say how to test the change, fix it now.</p>
+          <div class="do-box">
+            <ul><li>Open the PR on GitHub. Read the title, the body, and the Files changed tab.</li></ul>
+          </div>
+        </article>
+        </div>
+      </section>
+      <section id="102-resolve-review">
+        <h3>How do you resolve review comments?</h3>
+        <div class="beats">
+        <article class="beat" data-beat="seed-review-comments">
+          <h4>Leave review comments</h4>
+          <p class="say">In the workshop, I play the reviewer. On your team, a coworker leaves these.</p>
+          <div class="do-box">
+            <ol><li>On GitHub, open Files changed and start a review.</li><li>On the email save code, comment: “Reject an empty email and keep the previous value.”</li><li>On the redaction code, comment: “Add a unit test for the redaction.”</li><li>On the PR, comment: “This mixes the suggested-credit v2 migration with the email feature. Please split it.”</li><li>Submit the review with Request changes.</li></ol>
+          </div>
+        </article>
+        <article class="beat" data-beat="optional-bugbot" data-feature="Bugbot">
+          <h4>Run Bugbot</h4>
+          <p class="say">Bugbot is structured review: each finding has a file, a line, and a reason. Treat it like a reviewer, not an oracle.</p>
+          <div class="paste">
+            <div class="paste-head">
+              <span>Paste in Grok Build</span>
+              <button type="button" class="copy">Copy</button>
+            </div>
+            <pre>/review-bugbot this PR</pre>
+          </div>
+        </article>
+        <article class="beat" data-beat="bugbot-fallback">
+          <h4>Fallback: run the change reviewer</h4>
+          <div class="do-box">
+            <ul><li>If Bugbot is not enabled on this repository, use the project&#39;s change reviewer subagent instead.</li></ul>
+          </div>
+          <div class="paste">
+            <div class="paste-head">
+              <span>Paste in Grok Build</span>
+              <button type="button" class="copy">Copy</button>
+            </div>
+            <pre>Use the change reviewer subagent to review this PR. List each issue with its file, line, and severity.</pre>
+          </div>
+        </article>
+        <article class="beat" data-beat="triage-comments">
+          <h4>Triage the comments with the agent</h4>
+          <p class="say">The agent drafts the triage. I decide which comments get a code change.</p>
+          <div class="paste">
+            <div class="paste-head">
+              <span>Paste in Grok Build</span>
+              <button type="button" class="copy">Copy</button>
+            </div>
+            <pre>/ask Read the open review comments and Bugbot findings on this PR. For each one, say whether to fix it in this PR, split it into another PR, or reply without a change, and why.</pre>
+          </div>
+        </article>
+        <article class="beat" data-beat="fix-comments">
+          <h4>Fix the comments you accept</h4>
+          <p class="say">Same steering as 101: stop before the push so I review every diff.</p>
+          <div class="paste">
+            <div class="paste-head">
+              <span>Paste in Grok Build</span>
+              <button type="button" class="copy">Copy</button>
+            </div>
+            <pre>Fix the review comments we agreed to fix in this PR, one commit per comment. Stop before you push so I can review the diffs.</pre>
+          </div>
+          <div class="do-box">
+            <ul><li>Select Changes in the right hand panel. Review each commit.</li></ul>
+          </div>
+          <div class="paste">
+            <div class="paste-head">
+              <span>Paste in Grok Build</span>
+              <button type="button" class="copy">Copy</button>
+            </div>
+            <pre>Push the commits and reply on each thread with the commit that fixes it.</pre>
+          </div>
+        </article>
+        <article class="beat" data-beat="re-request-review">
+          <h4>Re-request review</h4>
+          <p class="say">A thread is resolved after a person checks the fix, not when the agent says it is done.</p>
+          <div class="do-box">
+            <ul><li>On GitHub, resolve the fixed threads and re-request review. Leave the split comment open.</li></ul>
+          </div>
+        </article>
+        </div>
+      </section>
+      <section id="102-split-change">
+        <h3>How do you split a big change?</h3>
+        <div class="beats">
+        <article class="beat" data-beat="propose-split">
+          <h4>Ask the agent to propose a split</h4>
+          <p class="say">Slice by what a reviewer can approve alone: an independent fix, a foundation, then the feature on top.</p>
+          <div class="paste">
+            <div class="paste-head">
+              <span>Paste in Grok Build</span>
+              <button type="button" class="copy">Copy</button>
+            </div>
+            <pre>/plan Split this PR into smaller PRs that each build, pass tests, and can be reviewed alone. Keep the review fixes. Name the slices, the files in each, the merge order, and which slices stack on another.</pre>
+          </div>
+        </article>
+        <article class="beat" data-beat="review-split-plan">
+          <h4>Review the split plan</h4>
+          <p class="say">Independent PRs target the base. A stacked PR targets the slice below it, so its diff shows only its own change.</p>
+          <div class="do-box">
+            <ul><li>Check that each slice has its own tests and that no file is split across slices unless it has to be. Expect the suggested-credit migration as its own slice.</li></ul>
+          </div>
+        </article>
+        <article class="beat" data-beat="build-split">
+          <h4>Open the smaller PRs</h4>
+          <div class="do-box">
+            <ul><li>Click Build Locally.</li></ul>
+          </div>
+          <div class="paste">
+            <div class="paste-head">
+              <span>Paste in Grok Build</span>
+              <button type="button" class="copy">Copy</button>
+            </div>
+            <pre>Build the plan. Create one branch per slice named demo/delete-me-102-&lt;slice&gt; and open a PR for each with a [demo-delete-me] title. Base independent slices on demo/delete-me-102-base and stacked slices on the slice below. Link the PRs to each other in their bodies.</pre>
+          </div>
+          <div class="do-box">
+            <ul><li>Record each branch: npm run demo:session -- record branch demo/delete-me-102-&lt;slice&gt; --remote</li></ul>
+          </div>
+        </article>
+        <article class="beat" data-beat="close-original">
+          <h4>Close the original PR</h4>
+          <p class="say">Review threads do not move to the new PRs. Link back so the reviewer can find the history.</p>
+          <div class="paste">
+            <div class="paste-head">
+              <span>Paste in Grok Build</span>
+              <button type="button" class="copy">Copy</button>
+            </div>
+            <pre>Close the original PR with a comment that links the smaller PRs that replace it.</pre>
+          </div>
+        </article>
+        </div>
+      </section>
+      <section id="102-merge-validate">
+        <h3>How do you merge and validate?</h3>
+        <div class="beats">
+        <article class="beat" data-beat="check-merge-order">
+          <h4>Check the merge order</h4>
+          <div class="paste">
+            <div class="paste-head">
+              <span>Paste in Grok Build</span>
+              <button type="button" class="copy">Copy</button>
+            </div>
+            <pre>/ask For each of my open [demo-delete-me] PRs, list its base, checks, review status, and merge order. Tell me which one is safe to merge first.</pre>
+          </div>
+        </article>
+        <article class="beat" data-beat="merge-first-slice">
+          <h4>Merge the first slice</h4>
+          <p class="say">Merge one slice at a time. After each merge, the next stacked PR needs a new base.</p>
+          <div class="do-box">
+            <ul><li>On GitHub, merge the first PR in the order. Use the repository&#39;s merge method.</li></ul>
+          </div>
+        </article>
+        <article class="beat" data-beat="retarget-stack">
+          <h4>Update the stacked PR</h4>
+          <p class="say">If checks fail or a reviewer blocks a slice, stop the stack there. Fix that slice. The slices already merged are safe.</p>
+          <div class="paste">
+            <div class="paste-head">
+              <span>Paste in Grok Build</span>
+              <button type="button" class="copy">Copy</button>
+            </div>
+            <pre>The first slice merged. Rebase the next stacked PR onto its new base, change the PR base to match, and push. Tell me if anything conflicts.</pre>
+          </div>
+        </article>
+        <article class="beat" data-beat="merge-remaining">
+          <h4>Merge the remaining slices</h4>
+          <div class="do-box">
+            <ul><li>Merge each remaining PR in order after its checks pass and its review is approved.</li></ul>
+          </div>
+        </article>
+        <article class="beat" data-beat="validate-after-merge">
+          <h4>Validate after merge</h4>
+          <p class="say">Merged is not done. I check the merged branch the way a user and a teammate would.</p>
+          <div class="paste">
+            <div class="paste-head">
+              <span>Paste in Grok Build</span>
+              <button type="button" class="copy">Copy</button>
+            </div>
+            <pre>Check out demo/delete-me-102-base and pull. Run the tests and start the application. Confirm each merged PR does what its description says, and list anything that is not done.</pre>
+          </div>
+          <div class="do-box">
+            <ol><li>Go to http://localhost:43173/invoices/inv_1048. Edit the email in the Customer box.</li><li>Go to http://localhost:43173/disputes/dsp_1043. The suggested credit reads $249.00 because the v2 migration merged.</li></ol>
+          </div>
+        </article>
+        <article class="beat" data-beat="debug-after-merge">
+          <h4>Debug a post-merge regression</h4>
+          <div class="do-box">
+            <ul><li>Only if validation found a problem.</li></ul>
+          </div>
+          <div class="paste">
+            <div class="paste-head">
+              <span>Paste in Grok Build</span>
+              <button type="button" class="copy">Copy</button>
+            </div>
+            <pre>/debug what changed in the last merge that causes this failure</pre>
+          </div>
+        </article>
+        <article class="beat" data-beat="cleanup">
+          <h4>Clean up</h4>
+          <div class="do-box">
+            <ol><li>git switch main</li><li>npm run demo:reset</li><li>Merged and closed PRs stay on GitHub with their [demo-delete-me] titles.</li></ol>
           </div>
         </article>
         </div>

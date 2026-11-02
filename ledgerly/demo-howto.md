@@ -1,10 +1,10 @@
 # Ledgerly demo howto
 
-Presenter run-of-show for the **101**, **201**, and **301** tracks, not a course. Every step stands on its own, so you can start anywhere. You still review each result before it ships.
+Presenter run-of-show for the **101**, **102**, **201**, and **301** tracks, not a course. Every step stands on its own, so you can start anywhere. You still review each result before it ships.
 
 Ledgerly is a small, fictional demo app. It exists to give Grok Build enablement steps a visible surface: code to read, a UI to inspect, a scoped error to fix, and tests to verify. The data is synthetic. Avery Quinn is the operator, the only plan prices are Starter **$49**, Growth **$99**, and Scale **$249**, and the clock is frozen at **23 August 2026** so every run is repeatable.
 
-The pastes below match the copy-paste blocks in `runbooks.html`. `start-ledgerly` renders that file in a Cursor Canvas. The Catalog menu switches tracks. `runbooks.html?track=201` selects 201 and `runbooks.html?track=301` selects 301 when the file is opened on its own. Each beat is independent; jump directly to any step.
+The pastes below match the copy-paste blocks in `runbooks.html`. `start-ledgerly` renders that file in a Cursor Canvas. The Catalog menu switches tracks. `runbooks.html?track=102` selects 102, `runbooks.html?track=201` selects 201, and `runbooks.html?track=301` selects 301 when the file is opened on its own. Each beat is independent; jump directly to any step.
 
 ## Jump menu
 
@@ -13,6 +13,13 @@ The 101 track has three sections. Open `runbooks.html` in the Canvas and copy a 
 1. **What is Grok Build?** — [Ask](#ask), [Plan](#plan), [Build in Agent mode](#build-in-agent-mode), [Debug](#debug), check the models
 2. **How do you work with an agent?** — allowlist, verify the email feature, redact, stop, interrupt and steer, continue to the end, review diffs, restore from a checkpoint
 3. **How do you govern an agent?** — [create a rule](#create-a-rule), create a skill, [Canvas](#canvas), [MCP / Figma](#mcp--figma)
+
+The 102 track has four sections. Open `runbooks.html?track=102` and copy a card for any beat. The facilitator outline is `outlines/grok-build-102.md`. Bugbot is an optional feature checkbox.
+
+1. **How do you raise a PR?** Start from the 101 change, practice base branch, check the change, open the PR, read it as a reviewer
+2. **How do you resolve review comments?** Leave review comments, optional Bugbot, change reviewer fallback, triage, fix, re-request review
+3. **How do you split a big change?** Propose the split, review it, open the smaller PRs, close the original
+4. **How do you merge and validate?** Merge order, merge, rebase the stack, merge the rest, validate after merge, debug, clean up
 
 The 201 track has four sections. Open `runbooks.html?track=201` and copy a card for any beat.
 
@@ -62,7 +69,7 @@ Open **http://localhost:43173**. Or ask an agent to run the `start-ledgerly` ski
 
 Check shipped state:
 
-- `npm test` is **1 failed / 32 passed**; the sole failure is `tests/suggested-credit-api.test.ts`
+- `npm test` is **1 failed / 33 passed**; the sole failure is `tests/suggested-credit-api.test.ts`
 - [http://127.0.0.1:43173/disputes/dsp_1043](http://127.0.0.1:43173/disputes/dsp_1043) shows **Suggested credit $400.00** in red, above the Scale price of **$249**
 - The deprecated v1 route returns the $400 claim; v2, the domain helper, and the seed store the correct $249 credit
 - Accept credit / Decline are disabled — that unfinished resolution UI is separate from the planted API-version error
@@ -231,12 +238,12 @@ Create three slides in Figma Slides outlining how I used Grok Build to develop a
 ```text
 Run npm test and report which tests passed and which failed. Do not edit any files.
 
-On a clean tree, npm test is 1 failed / 32 passed. The sole red test is tests/suggested-credit-api.test.ts because the client intentionally selects deprecated v1. Do not change the test, either route, or the seed.
+On a clean tree, npm test is 1 failed / 33 passed. The sole red test is tests/suggested-credit-api.test.ts because the client intentionally selects deprecated v1. Do not change the test, either route, or the seed.
 ```
 
 **If the client migration ran:** `tests/suggested-credit-api.test.ts` should be green and dsp_1043 should show **$249** from v2, with both routes intact.
 
-**If no migration ran:** `npm test` should remain **1 failed / 32 passed**. That is shipped state, not failed setup.
+**If no migration ran:** `npm test` should remain **1 failed / 33 passed**. That is shipped state, not failed setup.
 
 **Land:** A green check is evidence, not permission to merge. The presenter remains accountable.
 
@@ -256,7 +263,27 @@ npm run demo:reset
 
 **Then:** complete only the script's reported Figma, Cursor user-rule, Linear, or cloud-agent actions. The script resets files, recorded rules and skills, Canvas files, local demo branches, demo worktrees, SQLite, and port 43173. Cloud agent runs stay manual.
 
-**Shipped state again:** suggested credit **$400.00** from v1 on dsp_1043, v2 and stored credit **$249.00**, suite **1 failed / 32 passed**, status pills still writing `state=`.
+**Shipped state again:** suggested credit **$400.00** from v1 on dsp_1043, v2 and stored credit **$249.00**, suite **1 failed / 33 passed**, status pills still writing `state=`.
+
+---
+
+## The 102 track
+
+Open `runbooks.html?track=102`. Four section tabs match the Show headings in `outlines/grok-build-102.md`. Copy a card; Do text and prompts are on the card. 102 assumes the audience saw 101 and starts from the 101 change: the customer email editor, the redaction, and the suggested-credit fix. That mix is deliberately too big for one PR.
+
+**Before you start:** confirm you can push to `origin`. If you cannot, use your own fork. Run `npm run demo:session -- start`, then `preflight-checker track 102`.
+
+**Practice base:** every 102 PR merges into `demo/delete-me-102-base`, never `main`. Every branch is `demo/delete-me-102-*` and every PR title starts with `[demo-delete-me]`, per `.cursor/rules/disposable-demo-prs.mdc`. Record each branch with `npm run demo:session -- record branch <branch> --remote` as you create it.
+
+**Seeded review:** you play the reviewer. The **Leave review comments** card has the three comments to post: reject an empty email, add a redaction test, and split the suggested-credit migration out. The third comment is the bridge to the split section.
+
+**Bugbot:** optional. If Bugbot is not enabled on the repository, uncheck it and use the **Fallback: run the change reviewer** card. Its output has the same file, line, and severity shape.
+
+**Expected split:** the suggested-credit v2 migration as an independent slice, then the email save foundation, then the email UI and redaction stacked on it. Accept a different split if each slice builds and passes tests alone.
+
+**Validate:** on the merged base, `npm test` is green because the v2 migration merged, `inv_1048` has the email editor, and `dsp_1043` reads **$249.00**. That is the expected result on the practice base only. `main` keeps the planted v1 client.
+
+**Close:** `git switch main`, then `npm run demo:reset`. It deletes the local `demo/*` branches and the recorded remotes. Merged and closed PRs stay on GitHub.
 
 ---
 

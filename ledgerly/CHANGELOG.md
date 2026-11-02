@@ -9,12 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### In progress
 
+- **102 track.** Runbooks track `102` / `RUNBOOK_SECTIONS_102` continues 101 into the PR lifecycle: raise a PR, resolve review comments with the agent and Bugbot, split into smaller PRs, merge, and validate after merge (four sections, 22 beats: 5, 6, 4, 7). PRs merge into the practice base `demo/delete-me-102-base`. Not a formal release in this cut.
+- Facilitator outlines in `outlines/`: `grok-build-101.md` (transcribed from the 101 outline, version 1.4) and `grok-build-102.md` (version 1.0 draft). They link to each other.
 - **201 track** — Runbooks track `201` / `RUNBOOK_SECTIONS_201` is on main for CE workshop demos (Outline Show beats, Linear staging, disk plugin) but is not a formal release in this cut.
 - **301 track.** Runbooks track `301` / `RUNBOOK_SECTIONS_301` adds the Outline Show for orchestrating agents, tasks, and coworkers (four sections, 35 beats: 11, 12, 5, 7). Not a formal release in this cut.
 
 ### Added
 
-- `preflight-checker` project agent. Before a 101 / 201 / 301 session, reports pass / fail / blocked per track dependency. `readonly` is false so it can run shell probes; its instructions forbid edits, install, seed, `stage-linear`, and `mcp_auth` unless the operator asks to remediate.
+- `preflight-checker` project agent. Before a 101 / 102 / 201 / 301 session, reports pass / fail / blocked per track dependency. `readonly` is false so it can run shell probes; its instructions forbid edits, install, seed, `stage-linear`, and `mcp_auth` unless the operator asks to remediate.
 - Optional runbook beats record a feature name from the Outline tag. Each track lists those features as checkboxes, on by default. Turning one off hides its beats and the browser remembers the choice.
 - `change-reviewer` project agent. Diff inspection for the 301 review beat. `readonly` is false so it can run `git status` and `git diff`; its instructions forbid edits. It owns the closer-inspection list: authentication, payments, personal data, permissions, or secrets; difficult rollback; missing tests; a test an agent edited; scope outside the plan; and new dependencies or shell commands. Like `ledgerly-reviewer`, it reports Passed and Incomplete, with high, warning, and suggestion inside Incomplete.
 
