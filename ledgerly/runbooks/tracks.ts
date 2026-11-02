@@ -1,4 +1,5 @@
 import { RUNBOOK_SECTIONS_101 } from "@/runbooks/beats/101";
+import { RUNBOOK_SECTIONS_102 } from "@/runbooks/beats/102";
 import { RUNBOOK_SECTIONS_201 } from "@/runbooks/beats/201";
 import { RUNBOOK_SECTIONS_301 } from "@/runbooks/beats/301";
 import type { DemoSection, DemoTrack } from "@/runbooks/types";
@@ -10,6 +11,13 @@ export const RUNBOOK_TRACKS = [
     description:
       "You will explore different ways to work in Grok Build, use modes and models for the right tasks, apply rules and skills to ensure consistent quality, and complete at least one task with an agent.",
     sections: RUNBOOK_SECTIONS_101,
+  },
+  {
+    id: "102" as const,
+    title: "102",
+    description:
+      "You will take a local change through shipping: raise a PR from Grok Build, resolve review comments with the agent and Bugbot, split a big change into smaller PRs and merge them in order, then validate after merge.",
+    sections: RUNBOOK_SECTIONS_102,
   },
   {
     id: "201" as const,

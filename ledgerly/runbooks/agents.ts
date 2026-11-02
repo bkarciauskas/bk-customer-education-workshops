@@ -22,7 +22,7 @@ export const PROJECT_AGENTS = [
   {
     name: "preflight-checker",
     path: ".cursor/agents/preflight-checker.md",
-    when: "Before a 101, 201, or 301 session. Reports pass / fail / blocked per track dependency. readonly: false so it can run shell probes; its instructions forbid edits, install, seed, stage-linear, and mcp_auth unless asked to remediate.",
+    when: "Before a 101, 102, 201, or 301 session. Reports pass / fail / blocked per track dependency. readonly: false so it can run shell probes; its instructions forbid edits, install, seed, stage-linear, and mcp_auth unless asked to remediate.",
   },
 ] as const;
 
@@ -30,7 +30,7 @@ export const PROJECT_SKILLS = [
   {
     name: "choose-cursor-workflow",
     path: ".cursor/skills/choose-cursor-workflow/SKILL.md",
-    when: "Walk the 101 or 201 track, then choose the mode, model, rule, or skill from the shape of the work.",
+    when: "Walk the 101, 102, 201, or 301 track, then choose the mode, model, rule, or skill from the shape of the work.",
   },
   {
     name: "stage-linear",

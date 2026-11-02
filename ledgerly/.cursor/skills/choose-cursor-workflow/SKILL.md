@@ -1,25 +1,27 @@
 ---
 name: choose-cursor-workflow
-description: Walk the 101, 201, or 301 Ledgerly track, then choose the mode, model, rule, or skill that fits the shape of the work. You still review the result.
+description: Walk the 101, 102, 201, or 301 Ledgerly track, then choose the mode, model, rule, or skill that fits the shape of the work. You still review the result.
 ---
 
-# Walk the 101, 201, or 301 track
+# Walk the 101, 102, 201, or 301 track
 
-The demo ships three jumpable tracks: **101**, **201**, and **301**. Every beat is independent. If the user names a beat, jump directly to it. You still review the result.
+The demo ships four jumpable tracks: **101**, **102**, **201**, and **301**. Every beat is independent. If the user names a beat, jump directly to it. You still review the result.
 
 ## The tracks
 
 101 — You will explore different ways to work in Grok Build, use modes and models for the right tasks, apply rules and skills to ensure consistent quality, and complete at least one task with an agent.
 
+102 — You will take a local change through shipping: raise a PR from Grok Build, resolve review comments with the agent and Bugbot, split a big change into smaller PRs and merge them in order, then validate after merge.
+
 201 — You will curate what belongs in an agent's context, encode conventions as project skills, connect a curated set of MCP servers, and split one task across parallel agents.
 
 301: You will orchestrate work across agents, tasks, and coworkers: break tasks down for multiple agents, take a plan through parallel agents to a reviewable PR, scale review when several streams finish, and share ownership safely.
 
-The beats live in `runbooks/meta.ts` and in `runbooks.html`, which `start-ledgerly` renders in a Cursor Canvas. Open `runbooks.html?track=301` for the 301 track. Optional features are checkboxes, checked by default. Uncheck a feature to hide its beats. The choice is saved in the browser. Use the matching `example` verbatim. Do not invent another catalog price.
+The beats live in `runbooks/meta.ts` and in `runbooks.html`, which `start-ledgerly` renders in a Cursor Canvas. Open `runbooks.html?track=102` for the 102 track and `runbooks.html?track=301` for the 301 track. Optional features are checkboxes, checked by default. Uncheck a feature to hide its beats. The choice is saved in the browser. Use the matching `example` verbatim. Do not invent another catalog price.
 
 The named demo error is `dsp_1043` / the suggested-credit v1 client. Do not mention the invoice or dispute filter-pill `state=` seam unless the user is on that click path.
 
-Before a demo session, run `preflight-checker` with the track id (`preflight-checker track 101`, `201`, or `301`). It reports **Ready** when every required check for that track passed, and it does not install, seed, start the server, or stage Linear. If the track is missing, it asks which of `101`, `201`, or `301` and runs no checks. Then start the session with `npm run demo:session -- start`. Record every rule, skill, Canvas, Figma deck, Linear board, and demo branch it creates. Reset is script-first and clears every track at once; update the event record and reset script whenever a beat gains a new leftover.
+Before a demo session, run `preflight-checker` with the track id (`preflight-checker track 101`, `102`, `201`, or `301`). It reports **Ready** when every required check for that track passed, and it does not install, seed, start the server, or stage Linear. If the track is missing, it asks which of `101`, `102`, `201`, or `301` and runs no checks. Then start the session with `npm run demo:session -- start`. Record every rule, skill, Canvas, Figma deck, Linear board, and demo branch it creates. Reset is script-first and clears every track at once; update the event record and reset script whenever a beat gains a new leftover.
 
 ## 101 sections and beats
 
@@ -28,6 +30,17 @@ Before the session, run `preflight-checker` with the track id (`preflight-checke
 1. **What is Grok Build?** — Ask, Plan, Build in Agent mode, Debug, check the models, plan to fix the bug.
 2. **How do you work with an agent?** — Run Mode allowlist, verify the email feature, redact, stop, interrupt and steer, continue to the end, review diffs, restore from a checkpoint.
 3. **How do you govern an agent?** — create a user rule, test the rule, create a user skill, test the skill, Canvas, MCP / Figma.
+
+## 102 sections and beats
+
+Before the session, run `preflight-checker` with the track id (`preflight-checker track 102`). The facilitator outline is `outlines/grok-build-102.md`; 101 is `outlines/grok-build-101.md`.
+
+1. **How do you raise a PR?** — start from the 101 change, create the practice base branch, check what is in the change, open a PR from Grok Build, read it as a reviewer.
+2. **How do you resolve review comments?** — leave the seeded review comments, optional Bugbot, change reviewer fallback, triage with the agent, fix the accepted comments, re-request review.
+3. **How do you split a big change?** — propose the split, review it, open the smaller PRs, close the original.
+4. **How do you merge and validate?** — check the merge order, merge the first slice, update the stacked PR, merge the rest, validate after merge, debug a regression, clean up.
+
+102 PRs merge into `demo/delete-me-102-base`, never `main`. Branches are `demo/delete-me-102-*` and PR titles start with `[demo-delete-me]`. Record each branch with `npm run demo:session -- record branch <branch> --remote`.
 
 ## 201 sections and beats
 
