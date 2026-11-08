@@ -155,4 +155,14 @@ export const EXTRA_ACCOUNTS: ExtraAccount[] = [
     contactName: "Josie Tran",
     email: "billing@redwoodcomponents.example",
   },
+  {
+    customerId: "cus_spacex",
+    invoiceId: "inv_2015",
+    invoiceNumber: "INV-2015",
+    name: "SpaceX",
+    segment: "Strategic",
+    plan: "SCALE",
+    contactName: "Casey Nguyen",
+    email: "billing@spacex.example",
+  },
 ];
